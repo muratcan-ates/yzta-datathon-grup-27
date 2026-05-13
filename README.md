@@ -10,10 +10,10 @@
 
 <p align="center">
   <a href="#-proje-özeti"><strong>Proje Özeti</strong></a> ·
-  <a href="#-yarışma-yaklaşımı"><strong>Yaklaşım</strong></a> ·
+  <a href="#-yarışma-kriterleri"><strong>Yarışma</strong></a> ·
   <a href="#-sonuçlar"><strong>Sonuçlar</strong></a> ·
-  <a href="#-kurulum"><strong>Kurulum</strong></a> ·
-  <a href="#-reprodüksiyon"><strong>Reprodüksiyon</strong></a>
+  <a href="#-pipeline-mimarisi"><strong>Mimari</strong></a> ·
+  <a href="#-kurulum"><strong>Kurulum</strong></a>
 </p>
 
 <br/>
@@ -30,6 +30,7 @@
 ![GitHub commit activity](https://img.shields.io/github/commit-activity/w/muratcan-ates/yzta-datathon-grup-27?style=flat-square)
 ![GitHub repo size](https://img.shields.io/github/repo-size/muratcan-ates/yzta-datathon-grup-27?style=flat-square)
 ![GitHub top language](https://img.shields.io/github/languages/top/muratcan-ates/yzta-datathon-grup-27?style=flat-square)
+![License](https://img.shields.io/github/license/muratcan-ates/yzta-datathon-grup-27?style=flat-square)
 
 </div>
 
@@ -40,7 +41,7 @@
 ## 📖 İçindekiler
 
 - [🎯 Proje Özeti](#-proje-özeti)
-- [📋 Yarışma Yaklaşımı](#-yarışma-yaklaşımı)
+- [📋 Yarışma Kriterleri](#-yarışma-kriterleri)
 - [👥 Takım](#-takım)
 - [🛠️ Kullanılan Teknolojiler](#️-kullanılan-teknolojiler)
 - [📊 Sonuçlar](#-sonuçlar)
@@ -50,6 +51,7 @@
 - [🚀 Kurulum](#-kurulum)
 - [🔁 Reprodüksiyon](#-reprodüksiyon)
 - [📁 Proje Yapısı](#-proje-yapısı)
+- [🔧 Geliştirme](#-geliştirme)
 - [📝 Lisans](#-lisans)
 
 <br/>
@@ -58,36 +60,38 @@
 
 ## 🎯 Proje Özeti
 
-Bu depo, **YZTA 5. Akademi Dönemi Datathon yarışması** kapsamında Grup 27 tarafından geliştirilen makine öğrenmesi çözümünü içermektedir.
+Bu depo, **YZTA 5. Akademi Dönemi Datathon yarışması** kapsamında Grup 27 tarafından geliştirilen makine öğrenmesi çözümünü içermektedir. Sistem, bireylerin uyku, yaşam tarzı ve demografik özelliklerinden yola çıkarak **bilişsel performans skorlarını** tahmin eden uçtan uca bir regresyon pipeline'ıdır.
 
-**Problem:** Bireylerin uyku, yaşam tarzı ve demografik özelliklerinden yola çıkarak **bilişsel performans skorlarını (`bilissel_performans_skoru`, 0-10 aralığında sürekli değer)** tahmin etmek.
+**Neden önemli?** Bilişsel performans, kişinin günlük yaşam kalitesini, iş verimliliğini ve uzun vadeli sağlığını doğrudan etkileyen bir gösterge. Uyku düzeni, kafein tüketimi, ekran süresi gibi değiştirilebilir alışkanlıkların bilişsel skorla ilişkisini modelleyebilmek, hem bireysel sağlık takibi hem de toplumsal sağlık politikaları için somut bir bilgi tabanı oluşturuyor. Bu projede sadece bir tahmin skoru değil, **şeffaf ve tekrarlanabilir bir ML pipeline'ı** üretilmiştir — başka takım üyeleri kodu klonlayıp aynı sonucu deterministik biçimde üretebilir.
 
-**Yaklaşımımız:** LightGBM tabanlı, 5-fold KFold çapraz doğrulama ile eğitilmiş tek modelli bir regresyon pipeline'ı. Kategorik değişkenler LightGBM'in native categorical handling özelliğiyle işlendi; manuel encoding yapılmadı. Sonuç, Kaggle'a submit edilebilir formatta `submissions/` klasöründe.
-
-**Tek cümleyle:** Train + test CSV'lerini al → preprocessing + 5-fold LightGBM → out-of-fold tahmin + Kaggle submission CSV.
+**Tek cümleyle:** Train + test CSV'lerini al → 5-fold LightGBM CV → out-of-fold tahmin + Kaggle submission CSV.
 
 <br/>
 
 ---
 
-## 📋 Yarışma Yaklaşımı
+## 📋 Yarışma Kriterleri
 
-### Değerlendirme
+YZTA 5. Akademi Dönemi Datathon Bursiyer Kılavuzu'nda belirtilen tüm değerlendirme kriterleri bu projede ele alınmıştır.
 
-- **Metrik:** RMSE (Root Mean Squared Error)
-- **Format:** Kaggle competition (`yzta-2026-datathon`)
-- **Submission limiti:** Günde 3 submission, finalde 2 best seçilir
-- **Public/Private split:** %50 / %50 (random)
+### Datathon Değerlendirme Kriterleri
 
-### Stratejik Kararlar
+| # | Kriter | Durum | Karşılandığı Yer |
+|---|--------|:-:|------------------|
+| 1 | Feature Engineering | 🟡 | `src/grup27/features.py` (Sezin + Buse), baseline'a entegrasyon planlandı |
+| 2 | Exploratory Data Analysis (EDA) | ✅ | `notebooks/01_eda_sezin.ipynb` |
+| 3 | Kütüphane & Algoritma Seçimleri | ✅ | LightGBM seçim gerekçesi → `README` |
+| 4 | Model Performans Metrikleri (RMSE) | ✅ | OOF RMSE 1.22924, Public 1.21440 |
+| 5 | Temiz Kod & Düzenli Notebook | ✅ | `notebooks/02_baseline_lightgbm.ipynb` modüler hücreler |
 
-| Karar | Gerekçe |
-|-------|---------|
-| Tek model (LightGBM) | Zaman kısıtı + variance kontrol |
-| 5-fold KFold (shuffled) | Bias-variance trade-off için yeterli, time-series değil |
-| Native categorical handling | One-hot encoding'e kıyasla ~%3 daha iyi RMSE |
-| Early stopping (100 rounds) | Overfit önleme, ortalama best_iter ~190 |
-| Median + std değil mean blend | 5-fold mean test prediction averaging |
+### Teslim Beklentisi
+
+| Beklenti | Durum |
+|----------|:-:|
+| Kaggle submission (13 Mayıs 23:59) | ✅ |
+| Notebook (Code kısmı veya GitHub) | ✅ [`02_baseline_lightgbm.ipynb`](notebooks/02_baseline_lightgbm.ipynb) |
+| Public GitHub repository | ✅ [muratcan-ates/yzta-datathon-grup-27](https://github.com/muratcan-ates/yzta-datathon-grup-27) |
+| Reprodüksiyon talimatları | ✅ Bu README → [Reprodüksiyon](#-reprodüksiyon) |
 
 <br/>
 
@@ -95,11 +99,65 @@ Bu depo, **YZTA 5. Akademi Dönemi Datathon yarışması** kapsamında Grup 27 t
 
 ## 👥 Takım
 
-- **Muratcan Ateş** ([@muratcan-ates](https://github.com/muratcan-ates)) — Orchestrator / ML Engineer
-- **Sezin Tarlığ** ([@sezintarlig](https://github.com/sezintarlig)) — Data Analyst / EDA
-- **Buse Gülçen** ([@busegulcenn](https://github.com/busegulcenn)) — Feature Engineering
-- **Abdülaziz Kıran** ([@Abdulaziz-kiran](https://github.com/Abdulaziz-kiran)) — Documentation
-- **Eray Güler** ([@erayglr](https://github.com/erayglr)) — Takım Üyesi
+<table align="center">
+<tr>
+<td align="center">
+  <a href="https://github.com/muratcan-ates">
+    <img src="https://github.com/muratcan-ates.png" width="100" alt="Muratcan Ates"/>
+    <br/>
+    <sub><b>Muratcan Ateş</b></sub>
+  </a>
+  <br/>
+  <sub>Orchestrator</sub>
+  <br/>
+  <sub>ML Pipeline · Submission</sub>
+</td>
+<td align="center">
+  <a href="https://github.com/sezintarlig">
+    <img src="https://github.com/sezintarlig.png" width="100" alt="Sezin Tarlıg"/>
+    <br/>
+    <sub><b>Sezin Tarlığ</b></sub>
+  </a>
+  <br/>
+  <sub>Data Analyst</sub>
+  <br/>
+  <sub>EDA · Feature Functions</sub>
+</td>
+<td align="center">
+  <a href="https://github.com/busegulcenn">
+    <img src="https://github.com/busegulcenn.png" width="100" alt="Buse Gulcen"/>
+    <br/>
+    <sub><b>Buse Gülçen</b></sub>
+  </a>
+  <br/>
+  <sub>Feature Engineer</sub>
+  <br/>
+  <sub>v2 Features · Tests</sub>
+</td>
+<td align="center">
+  <a href="https://github.com/Abdulaziz-kiran">
+    <img src="https://github.com/Abdulaziz-kiran.png" width="100" alt="Abdulaziz Kiran"/>
+    <br/>
+    <sub><b>Abdülaziz Kıran</b></sub>
+  </a>
+  <br/>
+  <sub>Documentation</sub>
+  <br/>
+  <sub>README · Repo Structure</sub>
+</td>
+<td align="center">
+  <a href="https://github.com/erayglr">
+    <img src="https://github.com/erayglr.png" width="100" alt="Eray Guler"/>
+    <br/>
+    <sub><b>Eray Güler</b></sub>
+  </a>
+  <br/>
+  <sub>Takım Üyesi</sub>
+  <br/>
+  <sub>—</sub>
+</td>
+</tr>
+</table>
 
 <br/>
 
@@ -109,14 +167,14 @@ Bu depo, **YZTA 5. Akademi Dönemi Datathon yarışması** kapsamında Grup 27 t
 
 | Katman | Teknoloji | Sürüm | Neden? |
 |--------|-----------|:-----:|--------|
-| **Dil** | Python | 3.11 | Veri bilimi standardı |
-| **Veri** | pandas, numpy | 2.3, 2.0+ | Veri okuma ve nümerik işlemler |
-| **ML** | LightGBM | 4.6 | Gradient boosting, native categorical handling, hızlı eğitim |
+| **Dil** | Python | 3.11 | Veri bilimi ekosisteminin standart dili |
+| **Veri** | pandas, numpy | 2.3, 2.0+ | Veri okuma ve nümerik işlemler için endüstri standardı |
+| **ML** | LightGBM | 4.6 | Gradient boosting, native categorical handling, CPU üzerinde 5-fold ~17 saniye |
 | **Validation** | scikit-learn KFold | 1.7 | 5-fold CV ile robust OOF tahmin |
 | **Notebook** | Jupyter | 1.1 | EDA ve baseline geliştirme |
-| **Versiyon Kontrol** | Git + GitHub | — | Çoklu branch + PR workflow |
+| **Versiyon Kontrol** | Git + GitHub | — | Çoklu branch + PR workflow ile takım koordinasyonu |
 
-Tüm bağımlılıklar `requirements.txt` içinde sürümlenmiştir.
+Tüm bağımlılıklar `requirements.txt` içinde sürümlenmiştir. Eğitim/test tek bir conda+venv ortamında reprodüksiyona uygun şekilde çalışır.
 
 <br/>
 
@@ -143,7 +201,7 @@ Tüm bağımlılıklar `requirements.txt` içinde sürümlenmiştir.
 | 4 | 1.22662 | 161 |
 | 5 | 1.24581 | 177 |
 
-**Yorum:** Fold-bazlı RMSE değerleri **çok düşük variance** gösteriyor (±0.01). Bu, modelin farklı veri dilimlerinde tutarlı çalıştığına ve overfitting olmadığına işaret eder. Public score (1.21440), OOF'den (1.22924) biraz daha iyi geldi — beklendiği gibi, train/test dağılımları örtüşüyor.
+**Yorum:** Fold-bazlı RMSE değerleri **çok düşük variance** gösteriyor (standart sapma ±0.01). Bu, modelin farklı veri dilimlerinde tutarlı çalıştığına ve overfitting olmadığına işaret ediyor. Kaggle public score (1.21440), OOF skorundan (1.22924) biraz daha iyi geldi — beklendiği gibi, train ve test setlerinin dağılımları büyük ölçüde örtüşüyor. Bu durum, train üzerinde 5-fold CV ile alınan RMSE'nin gerçek test performansı için **güvenilir bir tahminci** olduğunu doğruluyor.
 
 ### Submission Geçmişi
 
@@ -159,7 +217,9 @@ Tüm bağımlılıklar `requirements.txt` içinde sürümlenmiştir.
 
 ## 🔬 Veri ve Ön İşleme
 
-### Veri Seti
+**Veri seti:** YZTA 2026 Datathon Kaggle competition (`yzta-2026-datathon`) — Bursiyerlere özel sentetik veri seti, bireylerin uyku düzeni, yaşam alışkanlıkları ve demografik bilgilerinden bilişsel performans skoru türetilmiş.
+
+### Veri İstatistikleri
 
 | Özellik | Değer |
 |---------|-------|
@@ -168,7 +228,7 @@ Tüm bağımlılıklar `requirements.txt` içinde sürümlenmiştir.
 | Toplam öznitelik (feature) | 22 |
 | Numerik öznitelikler | 15 |
 | Kategorik öznitelikler | 7 |
-| Hedef değişken | `bilissel_performans_skoru` (float, 0-10) |
+| Hedef değişken | `bilissel_performans_skoru` (float, 0-10 aralığı) |
 | Eksik değer (train) | 9,372 |
 | Eksik değer (test) | 4,068 |
 
@@ -179,12 +239,19 @@ Tüm bağımlılıklar `requirements.txt` içinde sürümlenmiştir.
 - **Min / Max:** 0.0 / 10.0
 - **Çeyrekler:** 25% = 4.40, 50% = 6.03, 75% = 7.57
 
-Dağılım normal-benzeri, hafif sola çarpık.
+Dağılım normal-benzeri, hafif sola çarpık. Hedef değişken sürekli ve sınırlı bir aralıkta olduğu için `np.clip(0, 10)` ile tahminlerin sınırlandırılması beklenen davranıştır.
+
+### Kategorik Değişkenler
+
+Toplam 7 adet kategorik değişken bulunmaktadır:
+- `cinsiyet`, `meslek`, `ulke`, `kronotip`, `ruh_sagligi_durumu`, `mevsim`, `gun_tipi`
+
+Bu değişkenler **LightGBM'in native categorical handling** özelliğiyle işlendi. One-hot encoding yerine doğrudan `category` dtype kullanıldı; bu yaklaşım hem RMSE açısından (~%3 daha iyi) hem de hesaplama maliyeti açısından (daha az bellek) avantaj sağlıyor.
 
 ### Ön İşleme Adımları
 
 1. **Train + test load** → `pandas.read_csv` ile yükleme
-2. **Categorical encoding** → `object` dtype → `category` dtype dönüşümü (LightGBM native handling için)
+2. **Categorical encoding** → `object` dtype → `category` dtype dönüşümü
 3. **Missing value handling** → LightGBM native NaN handling (manuel imputation yok)
 4. **Train/test categorical alignment** → Test'te train'de olmayan kategori yoktu (kontrol edildi)
 5. **Feature/target split** → `id` ve hedef hariç tüm sütunlar feature olarak kullanıldı
@@ -195,6 +262,8 @@ Dağılım normal-benzeri, hafif sola çarpık.
 
 ## 🏗️ Pipeline Mimarisi
 
+### Akış Diyagramı
+
 ```
 data/raw/
   ├── train.csv (56000 satır)
@@ -203,31 +272,50 @@ data/raw/
 
          │
          ▼
-┌─────────────────────────────────────┐
-│  notebooks/02_baseline_lightgbm.ipynb │
-│                                       │
-│  1. Data load                         │
-│  2. Categorical → category dtype      │
-│  3. 5-fold KFold split (seed=42)      │
-│                                       │
-│  ┌───────────────────────────────┐   │
-│  │ Fold 1-5 (her fold için):     │   │
-│  │  ├ LightGBM train             │   │
-│  │  ├ Early stopping (100)       │   │
-│  │  ├ OOF prediction (validation)│   │
-│  │  └ Test prediction (averaged) │   │
-│  └───────────────────────────────┘   │
-│                                       │
-│  4. OOF RMSE hesapla                  │
-│  5. Test predictions → clip(0, 10)    │
-│  6. Submission CSV oluştur            │
-└─────────────────┬─────────────────────┘
-                  │
-                  ▼
-           submissions/
-              └── sub_lgbm_5fold_oof1.2292_*.csv
-                  → Kaggle upload
+┌─────────────────────────────────────────┐
+│  notebooks/02_baseline_lightgbm.ipynb   │
+│                                         │
+│  1. Data load                           │
+│  2. Categorical → category dtype        │
+│  3. 5-fold KFold split (seed=42)        │
+│                                         │
+│  ┌─────────────────────────────────┐    │
+│  │ Fold 1-5 (her fold için):       │    │
+│  │  ├ LightGBM train               │    │
+│  │  ├ Early stopping (100 rounds)  │    │
+│  │  ├ OOF prediction (validation)  │    │
+│  │  └ Test prediction (averaged)   │    │
+│  └─────────────────────────────────┘    │
+│                                         │
+│  4. OOF RMSE hesapla                    │
+│  5. Test predictions → clip(0, 10)      │
+│  6. Submission CSV oluştur              │
+└──────────────────┬──────────────────────┘
+                   │
+                   ▼
+            submissions/
+               └── sub_lgbm_5fold_oof1.2292_*.csv
+                   → Kaggle upload
 ```
+
+### Bileşenler
+
+**Veri Yükleme:**
+- Train ve test CSV'leri `data/raw/` altından okunur
+- `data/` klasörü `.gitignore`'da olduğu için repo'ya commit edilmez
+
+**Categorical Handling:**
+- 7 kategorik sütun `category` dtype'a çevrilir
+- LightGBM `categorical_feature` parametresiyle native handling
+
+**Cross-Validation:**
+- 5-fold KFold, shuffled (random_state=42)
+- Her fold için ayrı LightGBM modeli eğitilir
+- Test tahminleri 5 modelin ortalamasıdır (`/N_SPLITS`)
+
+**Early Stopping:**
+- Validation RMSE 100 round boyunca iyileşmezse durdurulur
+- Ortalama best_iter ~190 (max 2000 round içinde)
 
 ### LightGBM Hiperparametreleri
 
@@ -245,7 +333,7 @@ data/raw/
 }
 ```
 
-Bu değerler baseline default'tur — hyperparameter tuning (Optuna) bir sonraki iterasyona planlanmıştır.
+Bu değerler **baseline default'tur** — Optuna ile hyperparameter tuning bir sonraki iterasyona planlanmıştır. Mevcut konfigürasyon, hızlı eğitim (17.2s) ile düşük variance (±0.01) arasında dengeli bir trade-off sunuyor.
 
 <br/>
 
@@ -253,7 +341,7 @@ Bu değerler baseline default'tur — hyperparameter tuning (Optuna) bir sonraki
 
 ## ⚠️ Kapsam ve Sınırlamalar
 
-Şeffaflık akademik bir prensiptir. Bu çözümün mevcut durumda **sınırlamalarını** açıkça belirtmek istiyoruz:
+Şeffaflık önemli bir akademik prensiptir. Bu çözümün mevcut durumdaki sınırlamaları aşağıda açıkça belirtilmiştir.
 
 ### Model Sınırlamaları
 
@@ -265,11 +353,11 @@ Bu değerler baseline default'tur — hyperparameter tuning (Optuna) bir sonraki
 
 - **Train/test dağılım analizi sınırlı:** Test setinin train'e ne kadar benzediği derinlemesine incelenmedi (KS test, distribution drift analizi yapılmadı).
 - **Outlier handling yok:** Aykırı değerler tespit edilip işlenmedi.
-- **Cross-validation strategy basit:** 5-fold KFold (shuffled) kullanıldı. Stratified KFold (binning) veya Repeated KFold daha robust olabilir.
+- **Cross-validation strategy basit:** 5-fold KFold (shuffled) kullanıldı. Stratified KFold (target binning ile) veya Repeated KFold daha robust olabilir.
 
 ### Sıralama Sınırlaması
 
-Kaggle leaderboard'da yarışma kazananları **0.13-0.20 RMSE bandında** yer alıyor. Bizim mevcut skorumuz (**1.21440**) bu seviyenin çok altında. Bu fark, üst sıralardaki takımların muhtemelen **agresif feature engineering**, **multi-model ensemble** ve **kapsamlı hyperparameter tuning** uyguladığını gösteriyor. Mevcut baseline'ımız sağlam bir temel olarak korunmakla birlikte, bu boşluğu kapatmak için yukarıdaki "Sınırlamalar" maddelerinin ele alınması gerekiyor.
+Kaggle leaderboard'da yarışma kazananları **0.13-0.20 RMSE bandında** yer alıyor. Bizim mevcut skorumuz (**1.21440**) bu seviyenin çok altında. Bu fark, üst sıralardaki takımların muhtemelen **agresif feature engineering**, **multi-model ensemble** ve **kapsamlı hyperparameter tuning** uyguladığını gösteriyor. Mevcut baseline'ımız sağlam bir temel olarak korunmakla birlikte, bu boşluğu kapatmak için yukarıdaki sınırlamaların ele alınması gerekiyor.
 
 <br/>
 
@@ -302,10 +390,6 @@ pip install -r requirements.txt
 
 # 4. Jupyter kernel kaydı (opsiyonel)
 python -m ipykernel install --user --name=yzta-datathon --display-name "YZTA Datathon"
-
-# 5. Veri setini ekle
-# Kaggle'dan train.csv, test_x.csv, sample_submission.csv indirip
-# data/raw/ klasörüne koy
 ```
 
 ### Veri Seti
@@ -314,7 +398,16 @@ Veri seti Kaggle competition sayfasından indirilebilir:
 - **Competition:** [YZTA 2026 Datathon](https://www.kaggle.com/competitions/yzta-2026-datathon)
 - **Erişim:** Sadece YZTA bursiyerlerine açık
 
-Dosyalar **`data/raw/`** klasörüne yerleştirilmelidir. Bu klasör `.gitignore`'da olduğu için repo'ya commit edilmez.
+İndirdiğiniz dosyalar **`data/raw/`** klasörüne yerleştirilmelidir:
+
+```
+data/raw/
+  ├── train.csv
+  ├── test_x.csv
+  └── sample_submission.csv
+```
+
+Bu klasör `.gitignore`'da olduğu için repo'ya commit edilmez.
 
 <br/>
 
@@ -322,7 +415,7 @@ Dosyalar **`data/raw/`** klasörüne yerleştirilmelidir. Bu klasör `.gitignore
 
 ## 🔁 Reprodüksiyon
 
-Baseline sonucu reproduce etmek için:
+Baseline sonucu **deterministik biçimde** reproduce etmek için:
 
 ```bash
 # Jupyter'ı başlat
@@ -332,15 +425,16 @@ jupyter notebook
 # notebooks/02_baseline_lightgbm.ipynb
 
 # Kernel: YZTA Datathon
-# Run All Cells (Shift+Enter ile sırasıyla)
+# Run All Cells (sırasıyla Shift+Enter)
 ```
 
-Notebook ~30 saniyede biter. Çıktı:
-- 5 fold'un RMSE değerleri
-- OOF RMSE
+Notebook yaklaşık **30 saniyede** biter ve şu çıktıları üretir:
+
+- 5 fold'un fold-bazlı RMSE değerleri
+- OOF RMSE (1.22924)
 - `submissions/sub_lgbm_5fold_oof<RMSE>_<TIMESTAMP>.csv` dosyası
 
-Sonuçlar deterministiktir (`seed=42` her yerde).
+**Determinizm garantisi:** `seed=42` her yerde tutarlı kullanıldığı için, aynı veri seti ve aynı kod ile her zaman aynı OOF RMSE elde edilir.
 
 <br/>
 
@@ -390,6 +484,38 @@ yzta-datathon-grup-27/
 
 ---
 
+## 🔧 Geliştirme
+
+### Branch Stratejisi
+
+- `main` — production, sadece tamamlanmış ve test edilmiş kod
+- Feature branch'leri — yeni özellik/düzeltme çalışmaları için
+
+PR workflow:
+
+```bash
+git checkout -b feature/yeni-ozellik
+# geliştirme...
+git commit -m "feat: kısa açıklama"
+git push origin feature/yeni-ozellik
+# GitHub'da PR aç → main
+```
+
+### Commit Konvansiyonu
+
+[Conventional Commits](https://www.conventionalcommits.org/) formatı kullanılmıştır:
+
+- `feat:` — yeni özellik
+- `fix:` — bug fix
+- `refactor:` — davranış değişmeden yapı iyileştirmesi
+- `docs:` — dokümantasyon
+- `chore:` — yardımcı değişiklikler (dependency update, config)
+- `test:` — test ekleme/düzeltme
+
+<br/>
+
+---
+
 ## 📝 Lisans
 
 MIT Lisansı altında yayımlanmıştır. Detaylar için [`LICENSE`](LICENSE) dosyasına bakınız.
@@ -402,6 +528,6 @@ MIT Lisansı altında yayımlanmıştır. Detaylar için [`LICENSE`](LICENSE) do
 
 **YZTA 5. Akademi Dönemi · Veri Bilimi Datathon · Mayıs 2026**
 
-Grup 27: [@muratcan-ates](https://github.com/muratcan-ates) · Sezin Tarlığ · Buse Gülçen · Abdülaziz Kıran · Eray Güler
+Geliştirenler: [@muratcan-ates](https://github.com/muratcan-ates) · Sezin Tarlığ · Buse Gülçen · Abdülaziz Kıran · Eray Güler
 
 </div>
