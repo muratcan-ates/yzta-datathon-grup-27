@@ -152,7 +152,7 @@ YZTA 5. Akademi Dönemi Datathon Bursiyer Kılavuzu'nda belirtilen tüm değerle
     <sub><b>Eray Güler</b></sub>
   </a>
   <br/>
-  <sub>Takım Üyesi</sub>
+  <sub>Support Engineer</sub>
   <br/>
   <sub>—</sub>
 </td>
@@ -528,6 +528,6 @@ MIT Lisansı altında yayımlanmıştır. Detaylar için [`LICENSE`](LICENSE) do
 
 **YZTA 5. Akademi Dönemi · Veri Bilimi Datathon · Mayıs 2026**
 
-Geliştirenler: [@muratcan-ates](https://github.com/muratcan-ates) · Sezin Tarlığ · Buse Gülçen · Abdülaziz Kıran · Eray Güler
+Geliştirenler: Muratcan Ates · Sezin Tarlığ · Buse Gülçen · Abdülaziz Kıran · Eray Güler
 
 </div>
